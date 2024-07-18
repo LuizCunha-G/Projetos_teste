@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha</title>
+    <link rel="stylesheet" href="/JS/style/jogo_da_velha.css">
+</head>
+<body>
+    <h1>Jogo da Velha</h1>
+    <section>
+        <div id="player1" class="player">Jogador 1 (X): <span id="score1">0</span></div>
+        <div id="tabuleiro">
+            <div class="linha">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+            <div class="linha">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+            <div class="linha">
+                <div class="box"></div>
+                <div class="box"></div>
+                <div class="box"></div>
+            </div>
+        </div>
+        <div id="player2" class="player">Jogador 2 (O): <span id="score2">0</span></div>
+    </section>
+    <div id="mensagem"></div>
+    <button onclick="reiniciarJogo()">Reiniciar Jogo</button>
+    <script src="/JS/src/jogo_da_velha.js"></script>
+</body>
+</html>
