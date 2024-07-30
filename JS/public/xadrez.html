@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xadrez</title>
+    <link rel="stylesheet" href="/JS/style/xadrez.css">
+</head>
+<body>
+    <canvas id="chessBoard" width="800" height="800"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('chessBoard');
+        const context = canvas.getContext('2d');
+        const size = 100;
+
+        function drawBoard() {
+            for(let row = 0; row < 8; row++) {
+                for(let col = 0; col < 8; col++) {
+                    context.fillStyle = (row + col) % 2 === 0 ? 'white' : 'black';
+                    context.fillRect(col * size, row * size, size, size);
+                }
+            }
+        }
+
+        drawBoard();
+
+        const pieces = {
+            pawn: {
+                white: 'peao_branco.png',
+                black: 'peao_preto.png'
+            },
+            king: {
+                white: 'rei_branco.png',
+                black: 'rei_preto.png'
+            },
+            queen: {
+                white: 'rainha_branco.png',
+                black: 'rainha_preto.png'
+            },
+            horse: {
+                white: 'cavalo_branco.png',
+                black: 'cavalo_preto.png'
+            },
+            bishop: {
+                white: 'bispo_branco.png',
+                black: 'bispo_preto.png'
+            },
+            tower: {
+                white: 'torre_branco.png',
+                black: 'torre_preto.png'
+            },
+        };
+
+        function loadImages(callback) {
+            let loadedImages = 0;
+            let totalImages = 0;
+
+            for(const piece of Object.values(pieces)) {
+                for(const src of Object.values(piece)) {
+                    totalImages++;
+                }
+            }
+
+            for(const [pieceType, colors] of Object.entries(pieces)) {
+                for(const [color, src] of Object.entries(colors)) {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = () => {
+                        loadedImages++;
+                        if(loadedImages === totalImages) {
+                            callback();
+                        }
+                    };
+                    pieces[pieceType][color] = img;
+                }
+            }
+        }
+
+        const board = [
+            ['t', 'h', 'b', 'q', 'k', 'b', 'h', 't'],
+            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+            ['T', 'H', 'B', 'Q', 'K', 'B', 'H', 'T']
+        ];
+
+        function drawPieces() {
+            for(let row = 0; row < 8; row++) {
+                for(let col = 0; col < 8; col++) {
+                    const piece = board[row][col];
+                    if(piece !== ' ') {
+                        const color = piece === piece.toUpperCase() ? 'white' : 'black';
+                        const type = piece.toLowerCase();
+                        const img = pieces[type][color];
+                        context.drawImage(img, col * size, row * size, size, size);
+                    }
+                }
+            }
+        }
+
+        loadImages(() => {
+            drawBoard();
+            drawPieces();
+        });
+
+        let selectedPiece = null;
+
+        canvas.addEventListener('mousedown', (event) => {
+            const x = event.offsetX;
+            const y = event.offsetY;
+            const col = Math.floor(x / size);
+            const row = Math.floor(y / size);
+
+            if(selectedPiece) {
+                board[selectedPiece.row][selectedPiece.col] = ' ';
+                board[row][col] = selectedPiece.piece;
+                selectedPiece = null;
+                drawBoard();
+                drawPieces();
+            } else {
+                selectedPiece = { row, col, piece: board[row][col] };
+            }
+        });
+    </script>
+</body>
+</html>
