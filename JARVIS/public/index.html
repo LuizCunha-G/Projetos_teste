@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS | ASSISTENTE VIRTUAL</title>
+    <link rel="stylesheet" href="style-bob.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="father">
+        <div class="image-container">
+            <div class="image">
+                <img src="./img/giphy.gif" alt="image">
+            </div>
+            <h1>JARVIS</h1>
+            <p>Eu sou o Assistente Virtual JARVIS, como posso ajudar você?</p>
+        </div>
+        <div class="father-resposta">
+            <div class="blur"></div>
+            <div class="father2-resposta">
+                <div id="idDuvida" style="display: block;">
+                    <h2>Qual é a sua dúvida?</h2>
+                </div>
+                <br><br>
+                <div id="resposta"></div>
+            </div>
+            <div class="container">
+                <input placeholder="Pesquisar" type="text" id="idPergunta" autocomplete="off">
+                <button onclick="gerarResposta()">
+                    <img src="./img/arrow-sm-left-svgrepo-com.svg" alt="Enviar">
+                </button>
+                <button id="micButton">
+                    <img src="./img/microphone-svgrepo-com.svg" alt="Microfone">
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<script>
+        
+// Função para gerar a resposta com base na pergunta escrita ou falada
+async function gerarResposta() {
+    const pergunta = document.getElementById('idPergunta').value;
+    if (!pergunta) return; // Não prosseguir se a pergunta estiver vazia
+    document.getElementById('idDuvida').style.display = "none";
+    document.getElementById('idPergunta').value = ""; // Limpa o campo de pergunta
+
+    try {
+        const response = await fetch('http://localhost:3334/perguntar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ pergunta })
+        });
+
+        const data = await response.json();
+        document.getElementById('resposta').style.display = 'block';
+        document.getElementById('resposta').innerText = data.resultado;
+        speakText(data.resultado); // Ativa a leitura em voz alta da resposta
+    } catch (error) {
+        console.error('Erro ao obter a resposta:', error);
+        document.getElementById('resposta').style.display = 'block';
+        document.getElementById('resposta').innerText = "Desculpe, ocorreu um erro ao tentar obter a resposta.";
+    }
+}
+
+// Função para ativar o reconhecimento de voz
+function startVoiceRecognition() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'pt-BR'; // Define o idioma para Português
+
+    recognition.start(); // Inicia o reconhecimento de voz
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript; // Captura a transcrição da fala
+        document.getElementById('idPergunta').value = transcript;
+        processCommand(transcript); // Processa o comando antes de chamar gerarResposta
+        gerarResposta(); // Chama a função para gerar a resposta
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Erro no reconhecimento de voz:', event.error);
+    };
+}
+
+// Função para sintetizar a fala
+function speakText(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR'; // Define o idioma para Português
+    speechSynthesis.speak(utterance); // Ativa a síntese de voz
+}
+
+// Função para processar comandos específicos e abrir sites
+function processCommand(message) {
+    if (message.toLowerCase().includes("jarvis")) {
+        speakText("Sim, como posso ajudar?");
+        return;
+    }
+    if (message.includes('oi') || message.includes('olá')) {
+        speakText("Olá, como posso ajudá-lo?");
+    } else if (message.includes("abrir google")) {
+        window.open("https://google.com", "_blank");
+        speakText("Abrindo Google.");
+    } else if (message.includes("abrir youtube")) {
+        window.open("https://youtube.com", "_blank");
+        speakText("Abrindo YouTube.");
+    } else if (message.includes("abrir facebook")) {
+        window.open("https://facebook.com", "_blank");
+        speakText("Abrindo Facebook.");
+    } else if (message.includes("abrir google maps")) {
+        window.open("https://maps.google.com", "_blank");
+        speakText("Abrindo Google Maps.");
+    } else if (message.includes("abrir gmail")) {
+        window.open("https://mail.google.com", "_blank");
+        speakText("Abrindo Gmail.");
+    } else if (message.includes("abrir notas")) {
+        window.open("https://keep.google.com", "_blank");
+        speakText("Abrindo Notas do Google Keep.");
+    } else if (message.includes("abrir documentos")) {
+        window.open("https://docs.google.com", "_blank");
+        speakText("Abrindo Documentos do Google.");
+    } else if (message.includes('o que é') || message.includes('quem é') || message.includes('o que são')) {
+        window.open(`https://www.google.com/search?q=${message.replace(/ /g, "+")}`, "_blank");
+        speakText("Buscando informações sobre " + message + " na internet.");
+    } else if (message.includes('wikipedia')) {
+        window.open(`https://pt.wikipedia.org/wiki/${message.replace("wikipedia", "").trim()}`, "_blank");
+        speakText("Aqui está o que encontrei na Wikipedia sobre " + message);
+    } else if (message.includes('que horas são')) {
+        const time = new Date().toLocaleTimeString('pt-BR');
+        speakText("A hora atual é " + time);
+    } else if (message.includes('que dia é hoje')) {
+        const date = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        speakText("Hoje é " + date);
+    } else {
+        window.open(`https://www.google.com/search?q=${message.replace(/ /g, "+")}`, "_blank");
+        speakText("Aqui está o que encontrei para " + message + " no Google.");
+    }
+}
+
+// Evento para o botão de microfone
+document.getElementById('micButton').addEventListener('click', startVoiceRecognition);
+
+// Adiciona um evento ao pressionar a tecla "Enter"
+document.getElementById('idPergunta').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        gerarResposta(); // Chama a função para gerar a resposta ao pressionar "Enter"
+    }
+});
+
+
+
+</script>
