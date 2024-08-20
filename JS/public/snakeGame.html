@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Snake Game JavaScript</title>
+    <link rel="stylesheet" href="/style/snakeGame.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script src="/src/snakeGame.js" defer></script>
+  </head>
+  <body>
+    <div class="settings-screen">
+      <h1>Configurações do Jogo</h1>
+      
+      <div class="option">
+        <label for="snake-color">Cor da Skin da Cobra:</label>
+        <input type="color" id="snake-color" value="#60CBFF">
+      </div>
+      
+      <div class="option">
+        <label for="difficulty">Dificuldade:</label>
+        <select id="difficulty">
+          <option value="easy">Fácil</option>
+          <option value="medium" selected>Médio</option>
+          <option value="hard">Difícil</option>
+        </select>
+      </div>
+      
+      <div class="option">
+        <label for="theme">Tema:</label>
+        <select id="theme">
+          <option value="light">Claro</option>
+          <option value="dark" selected>Escuro</option>
+        </select>
+      </div>
+      
+      <button id="start-game">Iniciar Jogo</button>
+    </div>
+
+    <div class="wrapper" style="display: none;">
+      <div class="game-details">
+        <span class="score">Score: 0</span>
+        <span class="high-score">High Score: 0</span>
+      </div>
+      <div class="play-board"></div>
+      <div class="controls">
+        <i data-key="ArrowLeft" class="fa-solid fa-arrow-left-long"></i>
+        <i data-key="ArrowUp" class="fa-solid fa-arrow-up-long"></i>
+        <i data-key="ArrowRight" class="fa-solid fa-arrow-right-long"></i>
+        <i data-key="ArrowDown" class="fa-solid fa-arrow-down-long"></i>
+      </div>
+    </div>
+  </body>
+</html>
