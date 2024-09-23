@@ -1,16 +1,34 @@
 class Cofrinho(
-    var objetivo : String = "",
-    var saldo : Double = 0.0,
-    var meta : Double = 0.0,
-    var depositos : Int = 0
+    var objetivo: String = "",
+    var saldo: Double = 0.0,
+    var meta: Double = 0.0,
+    var depositos: Int = 0
 ) {
 
+    fun depositar(valorDeposito: Double) {
+        if (valorDeposito > 0) {
+            saldo += valorDeposito
+            depositos++
+        }
+    }
 
+    fun retirar(valorRetirada: Double) {
+        if (valorRetirada > 0 && valorRetirada <= saldo) {
+            saldo -= valorRetirada
+        }
+    }
 
+    fun porcentagemAteMeta(): Double {
+        return (saldo / meta) * 100
+    }
 
-
-
-
+    fun descrever(): String {
+        return if (porcentagemAteMeta() >= 100) {
+            "O cofrinho de objetivo $objetivo está com R$ %.2f de saldo. Já chegou na meta, estando em %.2f%% dela!".format(saldo, porcentagemAteMeta())
+        } else {
+            "O cofrinho de objetivo $objetivo está com R$ %.2f de saldo, estando a %.2f%% da meta de R$ %.2f".format(saldo, porcentagemAteMeta(), meta)
+        }
+    }
 }
 
 /*
